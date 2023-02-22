@@ -5,10 +5,8 @@ function App() {
   return <h1>Test!</h1>
 }
 
-let ChordSVG = (
+const ChordSVG = (
   chordName,
-  height,
-  width,
   x,
   y,
   labelColor,
@@ -19,47 +17,107 @@ let ChordSVG = (
   labelWeight,
   tuning,
   showTuning,
+  height = 300,
+  width = 600,
   numStrings = 6,
   numFrets = 3,
-  strokeWidth = 1,
-  bgColor = "#fff"
+  stringWidth = 5,
+  fretHeight = 2,
+  bgColor = "white"
 ) => {
-  console.log(numStrings)
+  const chordProps = {
+    numStrings,
+    numFrets,
+    stringWidth,
+    fretHeight,
+    bgColor,
+    height,
+    width,
+  }
+
+  const viewBox = `0 0 ${width} ${height}`
+
   return (
-    <svg height="800pt" width="500pt">
-      <chordGrid
-        numStrings={numStrings}
-        numFrets={numFrets}
-        strokeWidth={strokeWidth}
-        bgColor={bgColor}
-        height={height}
-      />
+    <svg viewBox={viewBox} height={chordProps.height} width={chordProps.width}>
+      <ChordGrid {...chordProps}></ChordGrid>
     </svg>
   )
 }
 
-const chordGrid = (numStrings, numFrets, strokeWidth, bgColor, height) => {
+const ChordGrid = (props) => {
   return (
-    <rect height="800pt" width="500pt" fill={bgColor}>
-      {[...Array(numStrings)].map((x, i) => {
-        return <String strokeWidth={strokeWidth} key={i} height={height} />
-      })}
-    </rect>
+    <>
+      <rect
+        height={props.height}
+        width={props.width}
+        fill={props.bgColor}
+      ></rect>
+
+      <Strings
+        numStrings={props.numStrings}
+        stringWidth={props.stringWidth}
+        height={props.height}
+        width={props.width}
+      />
+
+      <Frets
+        numFrets={props.numFrets}
+        fretHeight={props.fretHeight}
+        height={props.height}
+        width={props.width}
+      />
+    </>
   )
 }
 
-const String = (strokeWidth, height) => {
-  return <rect height={height} width={strokeWidth} fill="black"></rect>
+const Strings = (props) => {
+  const spacing = props.width / (props.numStrings - 1)
+  return (
+    <g id="strings">
+      {[...Array(props.numStrings)].map((x, i) => {
+        return (
+          <rect
+            key={i}
+            x={Math.max(0, spacing * i - props.stringWidth)}
+            y={0}
+            width={props.stringWidth}
+            height={props.height}
+            fill="black"
+          />
+        )
+      })}
+    </g>
+  )
 }
 
-const nut = () => {}
+const Frets = (props) => {
+  const spacing = props.height / props.numFrets
+  return (
+    <g id="frets">
+      {[...Array(props.numFrets)].map((x, i) => {
+        return (
+          <rect
+            key={i}
+            x={0}
+            y={spacing * i}
+            width={props.width}
+            height={props.fretHeight}
+            fill="black"
+          ></rect>
+        )
+      })}
+    </g>
+  )
+}
 
-const topBar = () => {}
+const Nut = () => {}
 
-const chordName = () => {}
+const TopBar = () => {}
 
-const stringLabels = () => {}
+const ChordName = () => {}
 
-const fingerLabel = () => {}
+const StringLabels = () => {}
 
-const topFretLabel = () => {}
+const FingerLabel = () => {}
+
+const TopFretLabel = () => {}
