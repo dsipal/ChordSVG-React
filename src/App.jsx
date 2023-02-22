@@ -12,21 +12,26 @@ const ChordSVG = (
   x,
   y,
   labelColor,
-  fontFamily,
-  fontSize,
-  fontStyle,
   fontWeight,
   labelWeight,
-  tuning,
   showTuning,
+  fontFamily,
+  fontStyle,
+  fontSize = 48,
   height = 300,
+  topBarHeight = 100,
+  tuningHeight = 100,
   width = 600,
+  widthPadding = 100,
   numStrings = 6,
   stringWidth = 5,
   fretHeight = 2,
   bgColor = "white",
-  positions = ["x", "3", "2", "0", "1"]
+  positions = ["x", "3", "2", "0", "1", "0"],
+  tuning = ["E", "A", "D", "G", "B", "e"]
 ) => {
+  const totalHeight = height + topBarHeight + tuningHeight
+  const totalWidth = width + widthPadding * 2
   const chordProps = {
     numStrings,
     stringWidth,
@@ -34,13 +39,26 @@ const ChordSVG = (
     bgColor,
     height,
     width,
+    widthPadding,
+    totalHeight,
+    totalWidth,
+    topBarHeight,
+    tuningHeight,
     positions,
+    tuning,
+    fontSize,
   }
 
-  const viewBox = `0 0 ${width} ${height}`
+  const viewBox = `0 0 ${totalWidth} ${totalHeight}`
 
   return (
-    <svg viewBox={viewBox} height={chordProps.height} width={chordProps.width}>
+    <svg
+      viewBox={viewBox}
+      height={chordProps.height}
+      totalHeight={chordProps.totalHeight}
+      width={chordProps.width}
+      totalWidth={chordProps.totalWidth}
+    >
       <ChordGrid {...chordProps}></ChordGrid>
     </svg>
   )
@@ -55,30 +73,58 @@ const ChordGrid = (props) => {
   const maxFret = Math.max(...usedFrets)
   const numFrets = maxFret - minFret + 1
 
+  const commonProps = {
+    x: props.widthPadding,
+    y: props.topBarHeight,
+    height: props.height,
+    width: props.width,
+  }
   return (
     <>
       <rect
-        height={props.height}
-        width={props.width}
+        height={props.totalHeight}
+        width={props.totalWidth}
         fill={props.bgColor}
       ></rect>
       {minFret === 1 ? (
-        <Nut height="10" width={props.width} fill="black" />
+        <Nut
+          x={props.widthPadding}
+          y={props.topBarHeight}
+          height="10"
+          width={props.width}
+          fill="black"
+        />
       ) : (
         <></>
       )}
+
+      <TopBar
+        topBarHeight={props.topBarHeight}
+        width={props.width}
+        positions={props.positions}
+        fontSize={props.fontSize}
+      />
+
       <Strings
+        {...commonProps}
         numStrings={props.numStrings}
         stringWidth={props.stringWidth}
-        height={props.height}
-        width={props.width}
       />
 
       <Frets
+        {...commonProps}
         numFrets={numFrets}
         fretHeight={props.fretHeight}
-        height={props.height}
+      />
+
+      <StringLabels
+        x={10}
+        fill="black"
+        tuning={props.tuning}
+        height={props.totalHeight}
         width={props.width}
+        widthPadding={props.widthPadding}
+        fontSize={props.fontSize}
       />
     </>
   )
@@ -92,8 +138,8 @@ const Strings = (props) => {
         return (
           <rect
             key={i}
-            x={Math.max(0, spacing * i - props.stringWidth)}
-            y={0}
+            x={Math.max(0, spacing * i - props.stringWidth) + props.y}
+            y={props.y}
             width={props.stringWidth}
             height={props.height}
             fill="black"
@@ -112,8 +158,8 @@ const Frets = (props) => {
         return (
           <rect
             key={i}
-            x={0}
-            y={spacing * i}
+            x={0 + props.x}
+            y={spacing * i + props.y}
             width={props.width}
             height={props.fretHeight}
             fill="black"
@@ -126,16 +172,63 @@ const Frets = (props) => {
 
 const Nut = (props) => {
   return (
-    <rect id="nut" width={props.width} height={props.height} fill="black" />
+    <rect
+      y={props.y}
+      x={props.x}
+      id="nut"
+      width={props.width}
+      height={props.height}
+      fill="black"
+    />
   )
 }
 
-const TopBar = () => {}
+const TopBar = (props) => {
+  const spacing = props.width / (props.positions.length - 1)
+  return (
+    <g id="topbar">
+      {props.positions.map((x, i) => {
+        return (
+          <text
+            key={i}
+            dominantBaseline="middle"
+            textAnchor="middle"
+            x={spacing * (i + 1) - props.fontSize / 2}
+            y={props.fontSize}
+            fontSize={props.fontSize}
+          >
+            {x}
+          </text>
+        )
+      })}
+    </g>
+  )
+}
 
 const ChordName = () => {}
 
-const StringLabels = () => {}
+const StringLabels = (props) => {
+  const spacing = props.width / (props.tuning.length - 1)
+  return (
+    <g id="tuning">
+      {props.tuning.map((x, i) => {
+        return (
+          <text
+            key={i}
+            dominantBaseline="middle"
+            textAnchor="middle"
+            x={spacing * (i + 1) - props.fontSize / 2}
+            y={props.height - props.fontSize}
+            fontSize={props.fontSize}
+          >
+            {x}
+          </text>
+        )
+      })}
+    </g>
+  )
+}
 
 const FingerLabel = () => {}
 
-const TopFretLabel = () => {}
+const TopFretLabel = (props) => {}
