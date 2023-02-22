@@ -1,15 +1,16 @@
-import Svg, { Rect, Circle, Text } from "react-native-svg"
+import React from "react"
+import ReactDOM from "react-dom/client"
 
-export default ChordSVG = (
+function App() {
+  return <h1>Test!</h1>
+}
+
+let ChordSVG = (
   chordName,
-  numStrings = 6,
-  numFrets = 3,
   height,
   width,
   x,
   y,
-  strokeWidth = 1,
-  bgColor = "#fff",
   labelColor,
   fontFamily,
   fontSize,
@@ -17,31 +18,39 @@ export default ChordSVG = (
   fontWeight,
   labelWeight,
   tuning,
-  showTuning
+  showTuning,
+  numStrings = 6,
+  numFrets = 3,
+  strokeWidth = 1,
+  bgColor = "#fff"
 ) => {
+  console.log(numStrings)
   return (
-    <Svg>
+    <svg height="800pt" width="500pt">
       <chordGrid
         numStrings={numStrings}
         numFrets={numFrets}
         strokeWidth={strokeWidth}
         bgColor={bgColor}
-      ></chordGrid>
-    </Svg>
+        height={height}
+      />
+    </svg>
   )
 }
 
-const chordGrid = (numStrings, numFrets, strokeWidth, bgColor) => {
+const chordGrid = (numStrings, numFrets, strokeWidth, bgColor, height) => {
   return (
-    <Rect height="100%" width="100%" bgColor={bgColor}>
+    <rect height="800pt" width="500pt" fill={bgColor}>
       {[...Array(numStrings)].map((x, i) => {
-        return <String />
+        return <String strokeWidth={strokeWidth} key={i} height={height} />
       })}
-    </Rect>
+    </rect>
   )
 }
 
-const string = () => {}
+const String = (strokeWidth, height) => {
+  return <rect height={height} width={strokeWidth} fill="black"></rect>
+}
 
 const nut = () => {}
 
