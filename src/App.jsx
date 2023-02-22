@@ -1,6 +1,8 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 
+//fingerings = [(1-6)...]
+
 function App() {
   return <h1>Test!</h1>
 }
@@ -20,19 +22,19 @@ const ChordSVG = (
   height = 300,
   width = 600,
   numStrings = 6,
-  numFrets = 3,
   stringWidth = 5,
   fretHeight = 2,
-  bgColor = "white"
+  bgColor = "white",
+  positions = ["x", "3", "2", "0", "1"]
 ) => {
   const chordProps = {
     numStrings,
-    numFrets,
     stringWidth,
     fretHeight,
     bgColor,
     height,
     width,
+    positions,
   }
 
   const viewBox = `0 0 ${width} ${height}`
@@ -45,6 +47,14 @@ const ChordSVG = (
 }
 
 const ChordGrid = (props) => {
+  const usedFrets = props.positions
+    .filter((ele) => !isNaN(parseInt(ele)) && parseInt(ele) != 0)
+    .map((x) => parseInt(x))
+
+  const minFret = Math.min(...usedFrets)
+  const maxFret = Math.max(...usedFrets)
+  const numFrets = maxFret - minFret + 1
+
   return (
     <>
       <rect
@@ -52,7 +62,11 @@ const ChordGrid = (props) => {
         width={props.width}
         fill={props.bgColor}
       ></rect>
-
+      {minFret === 1 ? (
+        <Nut height="10" width={props.width} fill="black" />
+      ) : (
+        <></>
+      )}
       <Strings
         numStrings={props.numStrings}
         stringWidth={props.stringWidth}
@@ -61,7 +75,7 @@ const ChordGrid = (props) => {
       />
 
       <Frets
-        numFrets={props.numFrets}
+        numFrets={numFrets}
         fretHeight={props.fretHeight}
         height={props.height}
         width={props.width}
@@ -110,7 +124,11 @@ const Frets = (props) => {
   )
 }
 
-const Nut = () => {}
+const Nut = (props) => {
+  return (
+    <rect id="nut" width={props.width} height={props.height} fill="black" />
+  )
+}
 
 const TopBar = () => {}
 
