@@ -126,6 +126,14 @@ const ChordGrid = (props) => {
         widthPadding={props.widthPadding}
         fontSize={props.fontSize}
       />
+
+      <FingerLabel
+        height={props.height}
+        width={props.width}
+        numFrets={props.numFrets}
+        tuning={props.tuning}
+        positions={props.positions}
+      />
     </>
   )
 }
@@ -229,6 +237,28 @@ const StringLabels = (props) => {
   )
 }
 
-const FingerLabel = () => {}
+//
+const FingerLabel = (props) => {
+  const spacingY = props.height / props.numFrets
+  const spacingX = props.width / props.tuning.length - 1
+
+  return (
+    <g id="fretMarkers">
+      {props.positions.map((x, i) => {
+        console.log("x:", x, "i:", i)
+
+        if (x === "x") return <></>
+        else
+          return (
+            <circle
+              cx={103 + (spacingX + 17.3) * i}
+              cy={100 * x + 100}
+              r={20}
+            />
+          )
+      })}
+    </g>
+  )
+}
 
 const TopFretLabel = (props) => {}
