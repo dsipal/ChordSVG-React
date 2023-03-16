@@ -133,6 +133,7 @@ const ChordGrid = (props) => {
         numFrets={props.numFrets}
         tuning={props.tuning}
         positions={props.positions}
+        numStrings={props.numStrings}
       />
     </>
   )
@@ -240,8 +241,7 @@ const StringLabels = (props) => {
 //
 const FingerLabel = (props) => {
   const spacingY = props.height / props.numFrets
-  const spacingX = props.width / (props.tuning.length - 1)
-
+  const spacingX = props.width / (props.numStrings - 1)
   return (
     <g id="fretMarkers">
       {props.positions.map((x, i) => {
