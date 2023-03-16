@@ -240,7 +240,7 @@ const StringLabels = (props) => {
 //
 const FingerLabel = (props) => {
   const spacingY = props.height / props.numFrets
-  const spacingX = props.width / props.tuning.length - 1
+  const spacingX = props.width / (props.tuning.length - 1)
 
   return (
     <g id="fretMarkers">
@@ -248,14 +248,7 @@ const FingerLabel = (props) => {
         console.log("x:", x, "i:", i)
 
         if (x === "x") return <></>
-        else
-          return (
-            <circle
-              cx={103 + (spacingX + 17.3) * i}
-              cy={100 * x + 100}
-              r={20}
-            />
-          )
+        else return <circle cx={100 + spacingX * i} cy={100 * x + 100} r={20} />
       })}
     </g>
   )
