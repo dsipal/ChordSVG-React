@@ -1,8 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 
-//fingerings = [(1-6)...]
-
 function App() {
   return <h1>Test!</h1>
 }
@@ -197,18 +195,19 @@ const TopBar = (props) => {
   return (
     <g id="topbar">
       {props.positions.map((x, i) => {
-        return (
-          <text
-            key={i}
-            dominantBaseline="middle"
-            textAnchor="middle"
-            x={spacing * (i + 1) - props.fontSize / 2}
-            y={props.fontSize}
-            fontSize={props.fontSize}
-          >
-            {x}
-          </text>
-        )
+        if (x === "x" || x == 0)
+          return (
+            <text
+              key={i}
+              dominantBaseline="middle"
+              textAnchor="middle"
+              x={spacing * (i + 1) - props.fontSize / 2}
+              y={props.fontSize}
+              fontSize={props.fontSize}
+            >
+              {x}
+            </text>
+          )
       })}
     </g>
   )
@@ -247,8 +246,13 @@ const FingerLabel = (props) => {
       {props.positions.map((x, i) => {
         console.log("x:", x, "i:", i)
 
-        if (x === "x") return <></>
-        else return <circle cx={100 + spacingX * i} cy={100 * x + 100} r={20} />
+        if (x === "x" || x == 0) return <></>
+        else
+          return (
+            <circle cx={100 + spacingX * i} cy={100 * x + 62} r={20}>
+              {}
+            </circle>
+          )
       })}
     </g>
   )
