@@ -24,6 +24,7 @@ const ChordSVG = (
   numStrings = 6,
   stringWidth = 5,
   fretHeight = 2,
+  numFrets = 6,
   bgColor = "white",
   positions = ["x", "3", "2", "0", "1", "0"],
   tuning = ["E", "A", "D", "G", "B", "e"]
@@ -45,6 +46,7 @@ const ChordSVG = (
     positions,
     tuning,
     fontSize,
+    numFrets,
   }
 
   const viewBox = `0 0 ${totalWidth} ${totalHeight}`
@@ -76,6 +78,7 @@ const ChordGrid = (props) => {
     y: props.topBarHeight,
     height: props.height,
     width: props.width,
+    numFrets: props.numFrets
   }
   return (
     <>
@@ -88,9 +91,9 @@ const ChordGrid = (props) => {
         <Nut
           x={props.widthPadding}
           y={props.topBarHeight}
-          height="10"
+          height="20"
           width={props.width}
-          fill="black"
+          fill="#666"
         />
       ) : (
         <></>
@@ -117,7 +120,7 @@ const ChordGrid = (props) => {
 
       <StringLabels
         x={10}
-        fill="black"
+        fill="#666"
         tuning={props.tuning}
         height={props.totalHeight}
         width={props.width}
@@ -149,7 +152,7 @@ const Strings = (props) => {
             y={props.y}
             width={props.stringWidth}
             height={props.height}
-            fill="black"
+            fill="#666"
           />
         )
       })}
@@ -169,7 +172,7 @@ const Frets = (props) => {
             y={spacing * i + props.y}
             width={props.width}
             height={props.fretHeight}
-            fill="black"
+            fill="#666"
           ></rect>
         )
       })}
@@ -185,7 +188,7 @@ const Nut = (props) => {
       id="nut"
       width={props.width}
       height={props.height}
-      fill="black"
+      fill="#666"
     />
   )
 }
@@ -203,8 +206,7 @@ const TopBar = (props) => {
               textAnchor="middle"
               x={spacing * (i + 1) - props.fontSize / 2}
               y={props.fontSize}
-              fontSize={props.fontSize}
-            >
+              fontSize={props.fontSize}>
               {x}
             </text>
           )
@@ -239,19 +241,35 @@ const StringLabels = (props) => {
 
 //
 const FingerLabel = (props) => {
+  const spacingX = (props.width / (props.numStrings - 1))
   const spacingY = props.height / props.numFrets
-  const spacingX = props.width / (props.numStrings - 1)
+  console.log(props.height, props.numFrets)
   return (
     <g id="fretMarkers">
       {props.positions.map((x, i) => {
         console.log("x:", x, "i:", i)
+        console.log("spacingX", spacingX, "spacingY", spacingY)
 
+        //TODO: update this to be responsive
         if (x === "x" || x == 0) return <></>
         else
           return (
-            <circle cx={100 + spacingX * i} cy={100 * x + 62} r={20}>
-              {}
-            </circle>
+            <>
+            <circle 
+            cx={(100 + spacingX * i) -1} 
+            cy={(100 * x + spacingY) + 5} 
+            r={20}
+            fill="#666"/>
+
+            <text key={x} 
+            fill="#FFF" 
+            dominantBaseline="middle"
+            textAnchor="middle"
+            fontSize="40" 
+            x={(100 + spacingX * i) -1} 
+            y={100 * x + 59}>{x}
+            </text>
+            </>
           )
       })}
     </g>
