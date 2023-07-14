@@ -78,7 +78,12 @@ const ChordGrid = (props) => {
     y: props.topBarHeight,
     height: props.height,
     width: props.width,
-    numFrets: props.numFrets
+    numFrets: props.numFrets,
+    totalWidth: props.totalWidth,
+    totalHeight: props.totalHeight,
+    widthPadding: props.widthPadding,
+    topBarHeight: props.topBarHeight,
+    tuningHeight: props.tuningHeight
   }
   return (
     <>
@@ -129,6 +134,7 @@ const ChordGrid = (props) => {
       />
 
       <FingerLabel
+        {...commonProps}
         height={props.height}
         width={props.width}
         numFrets={props.numFrets}
@@ -161,14 +167,15 @@ const Strings = (props) => {
 }
 
 const Frets = (props) => {
-  const spacing = props.height / props.numFrets
+  const spacing = (props.height + 20) / props.numFrets
+  console.log(props.y)
   return (
     <g id="frets">
       {[...Array(props.numFrets)].map((x, i) => {
         return (
           <rect
             key={i}
-            x={0 + props.x}
+            x={props.x}
             y={spacing * i + props.y}
             width={props.width}
             height={props.fretHeight}
@@ -198,18 +205,30 @@ const TopBar = (props) => {
   return (
     <g id="topbar">
       {props.positions.map((x, i) => {
-        if (x === "x" || x == 0)
-          return (
-            <text
-              key={i}
-              dominantBaseline="middle"
-              textAnchor="middle"
-              x={spacing * (i + 1) - props.fontSize / 2}
-              y={props.fontSize}
-              fontSize={props.fontSize}>
-              {x}
-            </text>
-          )
+
+        //TODO: hacky, can be improved
+        if (x === "x"){
+          x = "X"
+        }
+        else if (x == 0){
+          x = "O"
+        }
+        else {
+          x = ""
+        }
+
+        return (
+          <text
+            key={i}
+            dominantBaseline="middle"
+            textAnchor="middle"
+            fill="#666"
+            x={spacing * (i + 1) - props.fontSize / 2}
+            y={props.fontSize}
+            fontSize={props.fontSize}>
+            {x}
+          </text>
+        )
       })}
     </g>
   )
@@ -227,9 +246,11 @@ const StringLabels = (props) => {
             key={i}
             dominantBaseline="middle"
             textAnchor="middle"
-            x={spacing * (i + 1) - props.fontSize / 2}
+            //TODO: Fix this to be more clear
+            x={spacing * (i + 1) - (props.fontSize / 2)}
             y={props.height - props.fontSize}
             fontSize={props.fontSize}
+            fill="#666"
           >
             {x}
           </text>
@@ -241,33 +262,36 @@ const StringLabels = (props) => {
 
 //
 const FingerLabel = (props) => {
-  const spacingX = (props.width / (props.numStrings - 1))
-  const spacingY = props.height / props.numFrets
-  console.log(props.height, props.numFrets)
+  const spacingX = (props.width/ (props.numStrings - 1))
+  const spacingY = (props.height + 20) / props.numFrets
+  const x = props.totalWidth;
+  console.log("spacingX", spacingX, "spacingY", spacingY)
+
   return (
     <g id="fretMarkers">
       {props.positions.map((x, i) => {
-        console.log("x:", x, "i:", i)
-        console.log("spacingX", spacingX, "spacingY", spacingY)
+        
 
         //TODO: update this to be responsive
+        //Potentially don't need to as the SVG should be able to be resizable
+        //maybe need to play around with it for different aspect ratios
         if (x === "x" || x == 0) return <></>
         else
           return (
             <>
             <circle 
-            cx={(100 + spacingX * i) -1} 
+            cx={(100 + spacingX * i) - 2} 
             cy={(100 * x + spacingY) + 5} 
             r={20}
             fill="#666"/>
 
             <text key={x} 
-            fill="#FFF" 
+            fill="#FFF"
             dominantBaseline="middle"
             textAnchor="middle"
-            fontSize="40" 
-            x={(100 + spacingX * i) -1} 
-            y={100 * x + 59}>{x}
+            fontSize="36" 
+            x={(100 + spacingX * i) - 2} 
+            y={(100 * x + 62)}>{x}
             </text>
             </>
           )
